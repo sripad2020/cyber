@@ -1,0 +1,95 @@
+{
+    "target": "reva.edu.in",
+    "timestamp": "2025-05-22T21:31:21.465686",
+    "target_ip": "18.155.49.80",
+    "open_ports": [],
+    "services": {
+        "error": "Nmap scan failed: 'nmap program was not found in path. PATH is : F:\\\\3.9\\\\Scripts\\\\;F:\\\\3.9\\\\;C:\\\\Program Files (x86)\\\\Python310-32\\\\Scripts\\\\;C:\\\\Program Files (x86)\\\\Python310-32\\\\;F:\\\\3.12.5\\\\Scripts\\\\;F:\\\\3.12.5\\\\;C:\\\\Program Files\\\\Python311\\\\Scripts\\\\;C:\\\\Program Files\\\\Python311\\\\;C:\\\\Program Files\\\\Python312\\\\Scripts\\\\;C:\\\\Program Files\\\\Python312\\\\;F:\\\\3.8\\\\Scripts\\\\;F:\\\\3.8\\\\;F:\\\\3.11\\\\Scripts\\\\;F:\\\\3.11\\\\;F:\\\\3.9.8\\\\Scripts\\\\;F:\\\\3.9.8\\\\;F:\\\\3.7\\\\Scripts\\\\;F:\\\\3.7\\\\;F:\\\\3.10\\\\Scripts\\\\;F:\\\\3.10\\\\;F:\\\\VMWARE\\\\bin\\\\;C:\\\\WINDOWS\\\\system32;C:\\\\WINDOWS;C:\\\\WINDOWS\\\\System32\\\\Wbem;C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\;C:\\\\WINDOWS\\\\System32\\\\OpenSSH\\\\;C:\\\\Program Files\\\\dotnet\\\\;C:\\\\Program Files\\\\Java\\\\jdk-21\\\\bin;C:\\\\Program Files\\\\nodejs\\\\;C:\\\\ProgramData\\\\chocolatey\\\\bin;C:\\\\Program Files\\\\Git\\\\cmd;C:\\\\Users\\\\sripa\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps;F:\\\\f1\\\\PyCharm Community Edition 2023.3.2\\\\bin;;C:\\\\Users\\\\sripa\\\\AppData\\\\Local\\\\Programs\\\\Microsoft VS Code\\\\bin;C:\\\\Program Files (x86)\\\\heroku\\\\bin;C:\\\\ProgramData\\\\sripa\\\\GitHubDesktop\\\\bin;C:\\\\Users\\\\sripa\\\\AppData\\\\Roaming\\\\npm'"
+    },
+    "http_headers": {
+        "http": {
+            "Content-Type": "text/html; charset=UTF-8",
+            "Transfer-Encoding": "chunked",
+            "Connection": "keep-alive",
+            "Date": "Thu, 22 May 2025 21:31:23 GMT",
+            "Expect-CT": "enforce,max-age=2592000",
+            "Content-Language": "en",
+            "Server": "Apache/2.4.62 (Amazon Linux)",
+            "Expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+            "Pragma": "no-cache",
+            "Set-Cookie": "ci_session=558c9ebda9d9b7fcef53d0e757b17168; expires=Thu, 22 May 2025 23:31:23 GMT; Max-Age=7200; path=/; HttpOnly; SameSite=Lax",
+            "X-Frame-Options": "SAMEORIGIN",
+            "Referrer-Policy": "no-referrer-when-downgrade",
+            "Permissions-Policy": "geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(), payment=()",
+            "X-XSS-Protection": "1; mode=block",
+            "X-Content-Type-Options": "nosniff",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+            "X-Cache": "Miss from cloudfront",
+            "Via": "1.1 970c514293f37edf67c1ed569c394588.cloudfront.net (CloudFront)",
+            "X-Amz-Cf-Pop": "BLR50-P2",
+            "Alt-Svc": "h3=\":443\"; ma=86400",
+            "X-Amz-Cf-Id": "NhP4ZzDDEn6LPBx8tu0T_DaCb5BnnrloLzpmCNNbDOd1Sg9qTfR-CA=="
+        },
+        "https": {
+            "Content-Type": "text/html; charset=UTF-8",
+            "Transfer-Encoding": "chunked",
+            "Connection": "keep-alive",
+            "Date": "Thu, 22 May 2025 21:31:24 GMT",
+            "Expect-CT": "enforce,max-age=2592000",
+            "Content-Language": "en",
+            "Server": "Apache/2.4.62 (Amazon Linux)",
+            "Expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+            "Pragma": "no-cache",
+            "X-Frame-Options": "SAMEORIGIN",
+            "Referrer-Policy": "no-referrer-when-downgrade",
+            "Permissions-Policy": "geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(), payment=()",
+            "X-XSS-Protection": "1; mode=block",
+            "X-Content-Type-Options": "nosniff",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+            "X-Cache": "Miss from cloudfront",
+            "Via": "1.1 e14a6e428a17d6552c9d200b559f4bb4.cloudfront.net (CloudFront)",
+            "X-Amz-Cf-Pop": "BLR50-P2",
+            "Alt-Svc": "h3=\":443\"; ma=86400",
+            "X-Amz-Cf-Id": "jhh6wyGOhactU_crH9N28URno34Ao048CzBzT-XEHtDCF0-laHVdXQ=="
+        }
+    },
+    "ssl_info": {
+        "issuer": {
+            "C": "US",
+            "O": "Amazon",
+            "CN": "Amazon RSA 2048 M03"
+        },
+        "subject": {
+            "CN": "www.reva.edu.in"
+        },
+        "valid_from": "20250327000000Z",
+        "valid_to": "20260425235959Z",
+        "serial": "7309107700543427820430798472753322114",
+        "signature_algorithm": "sha256WithRSAEncryption",
+        "cipher": [
+            "TLS_AES_128_GCM_SHA256",
+            "TLSv1.3",
+            128
+        ],
+        "version": "TLSv1.3"
+    },
+    "nmap_vuln_info": [],
+    "vulnerabilities": [
+        {
+            "type": "missing_security_headers",
+            "details": "Missing headers for http: Content-Security-Policy",
+            "severity": "medium"
+        },
+        {
+            "type": "missing_security_headers",
+            "details": "Missing headers for https: Content-Security-Policy",
+            "severity": "medium"
+        }
+    ],
+    "openvas_scan": {
+        "error": "OpenVAS scan failed: module 'socket' has no attribute 'AF_UNIX'",
+        "error_type": "OpenVASError"
+    }
+}

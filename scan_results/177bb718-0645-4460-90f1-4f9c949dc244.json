@@ -1,0 +1,25 @@
+{
+    "target": "reva.edu.in",
+    "timestamp": "2025-05-28T06:35:36.321715",
+    "target_ip": "18.161.216.4",
+    "open_ports": [],
+    "services": {
+        "error": "Nmap scan failed: 'nmap program was not found in path. PATH is : F:\\\\3.9\\\\Scripts\\\\;F:\\\\3.9\\\\;C:\\\\Program Files (x86)\\\\Python310-32\\\\Scripts\\\\;C:\\\\Program Files (x86)\\\\Python310-32\\\\;F:\\\\3.12.5\\\\Scripts\\\\;F:\\\\3.12.5\\\\;C:\\\\Program Files\\\\Python311\\\\Scripts\\\\;C:\\\\Program Files\\\\Python311\\\\;C:\\\\Program Files\\\\Python312\\\\Scripts\\\\;C:\\\\Program Files\\\\Python312\\\\;F:\\\\3.8\\\\Scripts\\\\;F:\\\\3.8\\\\;F:\\\\3.11\\\\Scripts\\\\;F:\\\\3.11\\\\;F:\\\\3.9.8\\\\Scripts\\\\;F:\\\\3.9.8\\\\;F:\\\\3.7\\\\Scripts\\\\;F:\\\\3.7\\\\;F:\\\\3.10\\\\Scripts\\\\;F:\\\\3.10\\\\;F:\\\\VMWARE\\\\bin\\\\;C:\\\\WINDOWS\\\\system32;C:\\\\WINDOWS;C:\\\\WINDOWS\\\\System32\\\\Wbem;C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\;C:\\\\WINDOWS\\\\System32\\\\OpenSSH\\\\;C:\\\\Program Files\\\\dotnet\\\\;C:\\\\Program Files\\\\Java\\\\jdk-21\\\\bin;C:\\\\Program Files\\\\nodejs\\\\;C:\\\\ProgramData\\\\chocolatey\\\\bin;C:\\\\Program Files\\\\Git\\\\cmd;C:\\\\Users\\\\sripa\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps;F:\\\\f1\\\\PyCharm Community Edition 2023.3.2\\\\bin;;C:\\\\Users\\\\sripa\\\\AppData\\\\Local\\\\Programs\\\\Microsoft VS Code\\\\bin;C:\\\\Program Files (x86)\\\\heroku\\\\bin;C:\\\\ProgramData\\\\sripa\\\\GitHubDesktop\\\\bin;C:\\\\Users\\\\sripa\\\\AppData\\\\Roaming\\\\npm'"
+    },
+    "http_headers": {
+        "http": {
+            "error": "HTTP fetch failed: cannot schedule new futures after interpreter shutdown"
+        },
+        "https": {
+            "error": "HTTP fetch failed: cannot schedule new futures after interpreter shutdown"
+        }
+    },
+    "ssl_info": {
+        "error": "testssl.sh not found at specified path"
+    },
+    "nmap_vuln_info": [],
+    "web_vulnerabilities": [],
+    "vulnerabilities": [],
+    "vulners_scan": {},
+    "mitigations": {}
+}

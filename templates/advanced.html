@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberMind | Vulnerability Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00ff9d;
+            --secondary: #00b8ff;
+            --accent: #ff2d75;
+            --purple: #b400ff;
+            --dark: #0a0e17;
+            --darker: #05080f;
+            --light: #ccd6f6;
+            --lighter: #e6f1ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--light);
+            background-color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -2;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.7;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 50px auto;
+            padding: 0 30px;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-icons {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            z-index: 100;
+        }
+
+        .nav-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(10, 25, 47, 0.7);
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+            position: relative;
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.8);
+            background: rgba(0, 255, 157, 0.2);
+        }
+
+        .nav-icon::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            right: 60px;
+            white-space: nowrap;
+            background: rgba(10, 25, 47, 0.9);
+            padding: 5px 15px;
+            border-radius: 5px;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            border: 1px solid var(--primary);
+        }
+
+        .nav-icon:hover::after {
+            opacity: 1;
+        }
+
+        .form-container, .results-container {
+            padding: 40px;
+            background: rgba(10, 25, 47, 0.6);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+
+        .form-container:hover, .results-container:hover {
+            box-shadow: 0 15px 40px rgba(0, 255, 157, 0.2);
+            border-color: rgba(0, 255, 157, 0.4);
+        }
+
+        .results-container {
+            max-height: 80vh;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        #results {
+            min-width: 100%;
+            overflow-x: auto;
+        }
+
+        .results-container::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .results-container::-webkit-scrollbar-track {
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 10px;
+        }
+
+        .results-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+
+        .results-container::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.7);
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            background: rgba(204, 214, 246, 0.1);
+            color: var(--lighter);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(0, 184, 255, 0.4);
+            background: rgba(0, 184, 255, 0.1);
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--darker);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 20px rgba(0, 255, 157, 0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-group button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .form-group button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 157, 0.6);
+        }
+
+        .form-group button:hover::before {
+            left: 100%;
+        }
+
+        .form-group button:active {
+            transform: scale(0.98);
+        }
+
+        .results-container h1 {
+            color: var(--secondary);
+            text-shadow: 0 0 10px rgba(0, 184, 255, 0.7);
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 10px;
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .result-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 157, 0.2);
+        }
+
+        .result-item h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .result-item h2 span {
+            margin-left: 10px;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        .result-item.critical h2 span {
+            color: var(--purple);
+        }
+
+        .result-item.high h2 span {
+            color: var(--accent);
+        }
+
+        .result-item.medium h2 span {
+            color: var(--secondary);
+        }
+
+        .result-item.low h2 span {
+            color: var(--primary);
+        }
+
+        .result-item h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--secondary);
+            margin: 15px 0 10px;
+            font-size: 1.2rem;
+        }
+
+        .result-item p {
+            margin: 0;
+            color: var(--light);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .result-item p strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .feature-table th, .feature-table td {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            text-align: left;
+            color: white;
+        }
+
+        .feature-table th {
+            background: rgba(0, 255, 157, 0.2);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .feature-table tr:nth-child(even) {
+            background: rgba(0, 255, 157, 0.05);
+        }
+
+        .feature-table tr:hover {
+            background: rgba(0, 255, 157, 0.1);
+        }
+
+        .error-message {
+            background-color: rgba(255, 45, 117, 0.1);
+            border-left: 5px solid var(--accent);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .error-message h2 {
+            color: var(--accent) !important;
+        }
+
+        .geolocation-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 184, 255, 0.1);
+            border-radius: 10px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .geolocation-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .neon-text {
+            text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px rgba(0,0,0,1);
+            animation: neonGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonGlow {
+            from {
+                text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor;
+            }
+            to {
+                text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 255, 157, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); }
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .nav-icons {
+                position: fixed;
+                bottom: 20px;
+                top: auto;
+                right: 50%;
+                transform: translateX(50%);
+                flex-direction: row;
+                gap: 15px;
+            }
+
+            .nav-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .nav-icon::after {
+                bottom: 50px;
+                right: 50%;
+                transform: translateX(50%);
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+                margin: 30px auto;
+            }
+
+            .form-container, .results-container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="three-canvas"></canvas>
+    <div id="particles-js"></div>
+
+    <div class="nav-icons">
+        <div class="nav-icon pulse" data-tooltip="Home" onclick="window.location.href='/'">
+            <i class="fas fa-home"></i>
+        </div>
+        <div class="nav-icon" data-tooltip="Predictions" onclick="window.location.href='/inputs'">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="nav-icon" data-tooltip="Phishing Detection" onclick="window.location.href='/phishing'">
+            <i class="fas fa-fish"></i>
+        </div>
+        <div class="nav-icon" data-tooltip="Malware Analysis" onclick="window.location.href='/malware'">
+            <i class="fas fa-bug"></i>
+        </div>
+        <div class="nav-icon" data-tooltip="Network Threats" onclick="window.location.href='/network'">
+            <i class="fas fa-network-wired"></i>
+        </div>
+        <div class="nav-icon" data-tooltip="Vulnerability Assessment" onclick="window.location.href='/advanced'">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <h1 class="neon-text">VULNERABILITY ASSESSMENT</h1>
+            <form id="vuln-form" method="POST" action="/advanced">
+                <div class="form-group">
+                    <label for="vuln-assessment">Target (Domain or IP)</label>
+                    <input type="text" id="vuln-assessment" name="vuln-assessment" placeholder="Enter target (e.g., example.com, 192.168.1.1)" required pattern="^(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}|(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$" title="Enter a valid domain (e.g., example.com) or IP address (e.g., 192.168.1.1)">
+                </div>
+                <div class="form-group">
+                    <button type="submit">Run Assessment</button>
+                </div>
+            </form>
+            <h1 class="neon-text" style="margin-top: 40px;">GEOLOCATION LOOKUP</h1>
+            <form id="geo-form" method="POST" action="/geolocation">
+                <div class="form-group">
+                    <label for="geolocation-ip">IP Address</label>
+                    <input type="text" id="geolocation-ip" name="geolocation-ip" placeholder="Enter IP address (e.g., 8.8.8.8)" required pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" title="Enter a valid IP address (e.g., 8.8.8.8)">
+                </div>
+                <div class="form-group">
+                    <button type="submit">Get Geolocation</button>
+                </div>
+            </form>
+        </div>
+        <div class="results-container">
+            <h1 class="neon-text">RESULTS</h1>
+            <div id="results">
+                {% if result %}
+                    {% if result.error %}
+                        <div class="result-item">
+                            <h2 class="neon-text">ERROR</h2>
+                            <div class="error-message">
+                                <h2 class="neon-text">Error</h2>
+                                <p><strong>Message:</strong> {{ result.error }}</p>
+                                {% if result.error_type %}
+                                    <p><strong>Type:</strong> {{ result.error_type }}</p>
+                                {% endif %}
+                                <p>Please check your input and try again.</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        {% if result.geolocation %}
+                <div class="geolocation-section">
+                    <h2 class="neon-text">Geolocation Results</h2>
+                    <table class="feature-table">
+                        <tr><th>Field</th><th>Value</th></tr>
+                        <tr><td>IP Address</td><td>{{ result.geolocation.ip | default('N/A') }}</td></tr>
+                        <tr><td>Country</td><td>{{ result.geolocation.location.country | default('N/A') }}</td></tr>
+                        <tr><td>Region</td><td>{{ result.geolocation.location.region | default('N/A') }}</td></tr>
+                        <tr><td>City</td><td>{{ result.geolocation.location.city | default('N/A') }}</td></tr>
+                        <tr><td>ISP</td><td>{{ result.geolocation.isp | default('N/A') }}</td></tr>
+                        <tr><td>Organization</td><td>{{ result.geolocation.org | default('N/A') }}</td></tr>
+                        <tr><td>Latitude</td><td>{{ result.geolocation.location.latitude | default('N/A') }}</td></tr>
+                        <tr><td>Longitude</td><td>{{ result.geolocation.location.longitude | default('N/A') }}</td></tr>
+                    </table>
+                </div>
+            {% endif %}
+                        {% if result.vulnerabilities or result.web_vulnerabilities %}
+                            {% set is_critical = result.vulnerabilities | selectattr('severity', 'equalto', 'critical') | list | length > 0 %}
+                            {% set is_high = result.vulnerabilities | selectattr('severity', 'equalto', 'high') | list | length > 0 %}
+                            {% set is_medium = result.vulnerabilities | selectattr('severity', 'equalto', 'medium') | list | length > 0 %}
+                            <div class="result-item {{ 'critical' if is_critical else 'high' if is_high else 'medium' if is_medium else 'low' }}">
+                                <h2>Vulnerability Assessment: <span class="neon-text">{{ 'Critical' if is_critical else 'High' if is_high else 'Medium' if is_medium else 'Low' }}</span></h2>
+                                <h3>Scan Details</h3>
+                                <table class="feature-table">
+                                    <tr><th>Field</th><th>Value</th></tr>
+                                    <tr><td>Target</td><td>{{ result.target | default('N/A') }}</td></tr>
+                                    <tr><td>Target IP</td><td>{{ result.target_ip | default('N/A') }}</td></tr>
+                                    <tr><td>Open Ports</td><td>{{ result.open_ports | join(', ') if result.open_ports else 'None' }}</td></tr>
+                                    <tr><td>Timestamp</td><td>{{ result.timestamp | default('N/A') }}</td></tr>
+                                    <tr><td>Vulnerabilities Found</td><td>{{ (result.vulnerabilities | length + result.web_vulnerabilities | length) if (result.vulnerabilities or result.web_vulnerabilities) else '0' }}</td></tr>
+                                </table>
+                                <details>
+                                    <summary>HTTP Headers</summary>
+                                    <table class="feature-table">
+                                        <tr><th>Scheme</th><th>Header</th><th>Value</th></tr>
+                                        {% if result.http_headers %}
+                                            {% for scheme, headers in result.http_headers.items() %}
+                                                {% if headers and not headers.error %}
+                                                    {% for header, value in headers.items() %}
+                                                        <tr>
+                                                            <td>{{ scheme | upper }}</td>
+                                                            <td>{{ header }}</td>
+                                                            <td>{{ value }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <tr>
+                                                        <td>{{ scheme | upper }}</td>
+                                                        <td colspan="2">{{ headers.error | default('No headers available') }}</td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr><td colspan="3">No HTTP headers available</td></tr>
+                                        {% endif %}
+                                    </table>
+                                </details>
+                                <details>
+                                    <summary>SSL/TLS Information</summary>
+                                    <table class="feature-table">
+                                        <tr><th>Field</th><th>Value</th></tr>
+                                        {% if result.ssl_info and not result.ssl_info.error %}
+                                            <tr><td>Cipher</td><td>{{ result.ssl_info.cipher | default('N/A') }}</td></tr>
+                                            <tr><td>Protocols</td><td>{{ result.ssl_info.protocols | join(', ') if result.ssl_info.protocols else 'N/A' }}</td></tr>
+                                            <tr><td>Issuer</td><td>{{ result.ssl_info.certificate.issuer | default('N/A') }}</td></tr>
+                                            <tr><td>Valid From</td><td>{{ result.ssl_info.certificate.valid_from | default('N/A') }}</td></tr>
+                                            <tr><td>Valid To</td><td>{{ result.ssl_info.certificate.valid_to | default('N/A') }}</td></tr>
+                                            <tr><td>Serial</td><td>{{ result.ssl_info.certificate.serial | default('N/A') }}</td></tr>
+                                        {% else %}
+                                            <tr><td colspan="2">{{ result.ssl_info.error | default('No SSL info available') }}</td></tr>
+                                        {% endif %}
+                                    </table>
+                                </details>
+                                <details>
+                                    <summary>Nmap Vulnerability Info</summary>
+                                    <table class="feature-table">
+                                        <tr><th>Port</th><th>Script</th><th>Service</th><th>Output</th></tr>
+                                        {% if result.nmap_vuln_info %}
+                                            {% for vuln in result.nmap_vuln_info %}
+                                                <tr>
+                                                    <td>{{ vuln.port }}</td>
+                                                    <td>{{ vuln.script }}</td>
+                                                    <td>{{ vuln.service | default('N/A') }}</td>
+                                                    <td>{{ vuln.output | default('N/A') }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr><td colspan="4">No vulnerabilities detected</td></tr>
+                                        {% endif %}
+                                    </table>
+                                </details>
+                                <details>
+                                    <summary>Network and System Vulnerabilities</summary>
+                                    <table class="feature-table">
+                                        <tr><th>Type</th><th>CVE ID</th><th>Details</th><th>Severity</th><th>CVSS Score</th><th>Mitigation</th></tr>
+                                        {% if result.vulnerabilities %}
+                                            {% for vuln in result.vulnerabilities %}
+                                                <tr>
+                                                    <td>{{ vuln.type | capitalize }}</td>
+                                                    <td>{{ vuln.cve_id | default('N/A') }}</td>
+                                                    <td>{{ vuln.details }}</td>
+                                                    <td>{{ vuln.severity | capitalize }}</td>
+                                                    <td>{{ vuln.cvss_score | default('N/A') }}</td>
+                                                    <td>{{ vuln.mitigation | default('N/A') }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr><td colspan="6">No vulnerabilities detected</td></tr>
+                                        {% endif %}
+                                    </table>
+                                </details>
+                                <details>
+                                    <summary>Web Vulnerabilities</summary>
+                                    <table class="feature-table">
+                                        <tr><th>Type</th><th>Details</th><th>Severity</th><th>Mitigation</th></tr>
+                                        {% if result.web_vulnerabilities %}
+                                            {% for vuln in result.web_vulnerabilities %}
+                                                <tr>
+                                                    <td>{{ vuln.type | capitalize }}</td>
+                                                    <td>{{ vuln.details }}</td>
+                                                    <td>{{ vuln.severity | capitalize }}</td>
+                                                    <td>{{ vuln.mitigation | default('N/A') }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr><td colspan="4">No web vulnerabilities detected</td></tr>
+                                        {% endif %}
+                                    </table>
+                                </details>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <div style="text-align: center; padding: 40px 0;">
+                        <i class="fas fa-shield-alt" style="font-size: 3rem; color: var(--secondary); margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--light); font-family: 'Orbitron', sans-serif;">Awaiting Analysis</h3>
+                        <p style="color: var(--light); opacity: 0.8;">Enter a target to begin vulnerability assessment or geolocation lookup</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kute.js@2.2.4/dist/kute.min.js" integrity="sha256-alfc2sY85fLueP1s+3gPK7iX6Tj6ZxG61uRKEG4Vq/o=" crossorigin="anonymous"></script>
+    <script>
+        // Three.js Scene Setup
+        const canvas = document.getElementById('three-canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particleCount = 1000;
+        const posArray = new Float32Array(particleCount * 3);
+        for(let i = 0; i < particleCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 10;
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.03,
+            color: 0x00ff9d,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            particlesMesh.rotation.x += 0.0005;
+            particlesMesh.rotation.y += 0.0005;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initialize particles.js
+        if (typeof particlesJS !== 'undefined') {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 120, density: { enable: true, value_area: 1000 } },
+                    color: { value: '#00ff9d' },
+                    shape: { type: 'circle' },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true, anim: { enable: true, speed: 2, size_min: 0.1 } },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#00ff9d',
+                        opacity: 0.3,
+                        width: 1,
+                        shadow: { enable: true, color: '#00ff9d', blur: 5 }
+                    },
+                    move: {
+                        enable: true,
+                        speed: 3,
+                        direction: 'none',
+                        random: true,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false,
+                        attract: { enable: true, rotateX: 600, rotateY: 1200 }
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: { enable: true, mode: 'repulse' },
+                        onclick: { enable: true, mode: 'push' },
+                        resize: true
+                    },
+                    modes: {
+                        repulse: { distance: 100, duration: 0.4 },
+                        push: { particles_nb: 6 }
+                    }
+                },
+                retina_detect: true
+            });
+        } else {
+            console.warn('particles.js not loaded, skipping initialization');
+        }
+
+        // Wait for DOM to load before running KUTE-dependent code
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add hover effects to form inputs
+            const inputs = document.querySelectorAll('.form-group input');
+            inputs.forEach(input => {
+                input.addEventListener('mouseenter', () => {
+                    if (typeof KUTE !== 'undefined') {
+                        KUTE.to(input, { boxShadow: '0 0 15px rgba(0, 255, 157, 0.4)' }, { duration: 300 }).start();
+                    } else {
+                        input.style.boxShadow = '0 0 15px rgba(0, 255, 157, 0.4)';
+                    }
+                });
+                input.addEventListener('mouseleave', () => {
+                    if (typeof KUTE !== 'undefined') {
+                        KUTE.to(input, { boxShadow: 'none' }, { duration: 300 }).start();
+                    } else {
+                        input.style.boxShadow = 'none';
+                    }
+                });
+            });
+
+            // Animate severity text
+            function animateSeverityText() {
+                const spans = document.querySelectorAll('.result-item.critical h2 span, .result-item.high h2 span, .result-item.medium h2 span, .result-item.low h2 span');
+                spans.forEach(span => {
+                    if (typeof KUTE !== 'undefined') {
+                        KUTE.to(span, {
+                            textShadow: `0 0 5px ${span.style.color}, 0 0 10px ${span.style.color}, 0 0 20px ${span.style.color}`
+                        }, { duration: 1000, yoyo: true, repeat: Infinity }).start();
+                    } else {
+                        span.style.textShadow = `0 0 5px ${span.style.color}, 0 0 10px ${span.style.color}, 0 0 20px ${span.style.color}`;
+                    }
+                });
+            }
+
+            // Run animation on page load
+            animateSeverityText();
+
+            // AJAX form submission for vulnerability assessment
+            const vulnForm = document.getElementById('vuln-form');
+            vulnForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(vulnForm);
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '<p>Loading...</p>';
+
+                try {
+                    const response = await fetch('/advanced', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newResults = doc.querySelector('#results').innerHTML;
+                    resultsDiv.innerHTML = newResults;
+                    animateSeverityText();
+                } catch (error) {
+                    resultsDiv.innerHTML = `
+                        <div class="result-item">
+                            <h2 class="neon-text">ERROR</h2>
+                            <div class="error-message">
+                                <h2 class="neon-text">Error</h2>
+                                <p><strong>Message:</strong> Failed to fetch results: ${error.message}</p>
+                                <p>Please check your input and try again.</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            // AJAX form submission for geolocation
+            const geoForm = document.getElementById('geo-form');
+            geoForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(geoForm);
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '<p>Loading...</p>';
+
+                try {
+                    const response = await fetch('/geolocation', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newResults = doc.querySelector('#results').innerHTML;
+                    resultsDiv.innerHTML = newResults;
+                    animateSeverityText();
+                } catch (error) {
+                    resultsDiv.innerHTML = `
+                        <div class="result-item">
+                            <h2 class="neon-text">ERROR</h2>
+                            <div class="error-message">
+                                <h2 class="neon-text">Error</h2>
+                                <p><strong>Message:</strong> Failed to fetch geolocation results: ${error.message}</p>
+                                <p>Please check your input and try again.</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

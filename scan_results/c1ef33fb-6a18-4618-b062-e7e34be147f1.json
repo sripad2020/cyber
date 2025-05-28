@@ -1,0 +1,1 @@
+{"target": "www.reva.edu.in", "target_ip": "18.161.229.84", "openvas_scan": {"error": "OpenVAS scan failed: module 'socket' has no attribute 'AF_UNIX'"}}

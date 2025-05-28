@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberMind Threat Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00ff9d;
+            --secondary: #00b8ff;
+            --dark: #0a192f;
+            --light: #ccd6f6;
+            --accent: #ff2d75;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--light);
+            background-color: var(--dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-bottom: 40px;
+        }
+
+        .section {
+            padding: 60px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--primary);
+            display: inline-block;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: rgba(10, 25, 47, 0.8);
+            border-radius: 10px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 255, 157, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            z-index: -1;
+            border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 255, 157, 0.3);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .feature-desc {
+            color: rgba(204, 214, 246, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            border: none;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 255, 157, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 255, 157, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: rgba(204, 214, 246, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .glow {
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px rgba(0, 255, 157, 0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(0, 255, 157, 0.8), 0 0 30px rgba(0, 255, 157, 0.6);
+            }
+        }
+
+        .cyber-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .tech-stack {
+            margin-top: 60px;
+        }
+
+        .tech-icons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .tech-icon {
+            font-size: 3rem;
+            color: var(--secondary);
+            transition: all 0.3s ease;
+        }
+
+        .tech-icon:hover {
+            color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        .model-card {
+            background: rgba(10, 25, 47, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .model-name {
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .model-desc {
+            color: rgba(204, 214, 246, 0.8);
+        }
+
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <header class="section">
+        <div class="container">
+            <h1 class="glow">CyberMind Threat Detection</h1>
+            <p class="subtitle">Advanced AI-powered cybersecurity platform for comprehensive threat detection and analysis</p>
+
+            <div class="tech-stack">
+                <h3>Powered By:</h3>
+                <div class="tech-icons">
+                    <i class="fab fa-python tech-icon floating" style="animation-delay: 0s;"></i>
+                    <i class="fas fa-robot tech-icon floating" style="animation-delay: 0.5s;"></i>
+                    <i class="fas fa-brain tech-icon floating" style="animation-delay: 1s;"></i>
+                    <i class="fas fa-shield-alt tech-icon floating" style="animation-delay: 1.5s;"></i>
+                    <i class="fas fa-network-wired tech-icon floating" style="animation-delay: 2s;"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Platform Overview</h2>
+            <p>CyberMind Threat Detection is a comprehensive cybersecurity platform that leverages machine learning models and threat intelligence APIs to detect and analyze various cyber threats. The platform provides multiple detection modules to protect against different attack vectors.</p>
+
+            <div class="features-grid">
+                <div class="feature-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+                    <div class="feature-icon"><i class="fas fa-fish"></i></div>
+                    <h3 class="feature-title">Phishing Detection</h3>
+                    <p class="feature-desc">Analyze URLs, email content, and domain information to detect phishing attempts and suspicious activities.</p>
+                    <a href="/phishing" class="btn btn-outline">Explore Module</a>
+                </div>
+
+                <div class="feature-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+                    <div class="feature-icon"><i class="fas fa-bug"></i></div>
+                    <h3 class="feature-title">Malware Analysis</h3>
+                    <p class="feature-desc">Scan uploaded files and check file hashes against threat intelligence databases to detect malware.</p>
+                    <a href="/malware" class="btn btn-outline">Explore Module</a>
+                </div>
+
+                <div class="feature-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+                    <div class="feature-icon"><i class="fas fa-network-wired"></i></div>
+                    <h3 class="feature-title">Network Threats</h3>
+                    <p class="feature-desc">Perform port scanning, DNS lookups, SSL checks, and vulnerability assessments for network security.</p>
+                    <a href="/network" class="btn btn-outline">Explore Module</a>
+                </div>
+
+                <div class="feature-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+                    <div class="feature-icon"><i class="fas fa-user-secret"></i></div>
+                    <h3 class="feature-title">Credential Protection</h3>
+                    <p class="feature-desc">Check if email addresses or passwords have been compromised in known data breaches.</p>
+                    <a href="/credentials" class="btn btn-outline">Explore Module</a>
+                </div>
+
+                <div class="feature-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+                    <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                    <h3 class="feature-title">Advanced Threat Intel</h3>
+                    <p class="feature-desc">Generate threat reports, search for CVEs, and get geolocation data for threat indicators.</p>
+                    <a href="/advanced" class="btn btn-outline">Explore Module</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Get Started</h2>
+            <p>Ready to enhance your cybersecurity posture with AI-powered threat detection?</p>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="/inputs" class="btn">Start Threat Detection</a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.0/dist/vanilla-tilt.min.js"></script>
+
+    <script>
+        // Initialize particles.js
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#00ff9d"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#00b8ff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+
+        // Initialize tilt.js
+        VanillaTilt.init(document.querySelectorAll(".feature-card"), {
+            max: 15,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.5,
+        });
+
+        // Three.js background animation
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Position the renderer behind other content
+        renderer.domElement.style.position = 'fixed';
+        renderer.domElement.style.top = '0';
+        renderer.domElement.style.left = '0';
+        renderer.domElement.style.zIndex = '-1';
+
+        // Create a grid helper
+        const gridHelper = new THREE.GridHelper(100, 100, 0x00ff9d, 0x00ff9d);
+        scene.add(gridHelper);
+
+        // Add some floating objects
+        const geometry = new THREE.IcosahedronGeometry(1, 0);
+        const material = new THREE.MeshBasicMaterial({
+            color: 0x00b8ff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.5
+        });
+
+        const objects = [];
+        for (let i = 0; i < 5; i++) {
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = Math.random() * 40 - 20;
+            mesh.position.y = Math.random() * 40 - 20;
+            mesh.position.z = Math.random() * 40 - 20;
+            mesh.scale.setScalar(Math.random() * 2 + 0.5);
+            scene.add(mesh);
+            objects.push(mesh);
+        }
+
+        camera.position.z = 30;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            objects.forEach(obj => {
+                obj.rotation.x += 0.005;
+                obj.rotation.y += 0.01;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

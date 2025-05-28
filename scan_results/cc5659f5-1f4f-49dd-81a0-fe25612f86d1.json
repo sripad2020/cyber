@@ -1,0 +1,48 @@
+{
+    "target": "8.8.8.8",
+    "timestamp": "2025-05-28T07:46:29.555607",
+    "target_ip": "8.8.8.8",
+    "open_ports": [],
+    "services": {
+        "error": "Nmap scan failed: 'nmap program was not found in path. PATH is : F:\\\\3.9\\\\Scripts\\\\;F:\\\\3.9\\\\;C:\\\\Program Files (x86)\\\\Python310-32\\\\Scripts\\\\;C:\\\\Program Files (x86)\\\\Python310-32\\\\;F:\\\\3.12.5\\\\Scripts\\\\;F:\\\\3.12.5\\\\;C:\\\\Program Files\\\\Python311\\\\Scripts\\\\;C:\\\\Program Files\\\\Python311\\\\;C:\\\\Program Files\\\\Python312\\\\Scripts\\\\;C:\\\\Program Files\\\\Python312\\\\;F:\\\\3.8\\\\Scripts\\\\;F:\\\\3.8\\\\;F:\\\\3.11\\\\Scripts\\\\;F:\\\\3.11\\\\;F:\\\\3.9.8\\\\Scripts\\\\;F:\\\\3.9.8\\\\;F:\\\\3.7\\\\Scripts\\\\;F:\\\\3.7\\\\;F:\\\\3.10\\\\Scripts\\\\;F:\\\\3.10\\\\;F:\\\\VMWARE\\\\bin\\\\;C:\\\\WINDOWS\\\\system32;C:\\\\WINDOWS;C:\\\\WINDOWS\\\\System32\\\\Wbem;C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\;C:\\\\WINDOWS\\\\System32\\\\OpenSSH\\\\;C:\\\\Program Files\\\\dotnet\\\\;C:\\\\Program Files\\\\Java\\\\jdk-21\\\\bin;C:\\\\Program Files\\\\nodejs\\\\;C:\\\\ProgramData\\\\chocolatey\\\\bin;C:\\\\Program Files\\\\Git\\\\cmd;C:\\\\Users\\\\sripa\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps;F:\\\\f1\\\\PyCharm Community Edition 2023.3.2\\\\bin;;C:\\\\Users\\\\sripa\\\\AppData\\\\Local\\\\Programs\\\\Microsoft VS Code\\\\bin;C:\\\\Program Files (x86)\\\\heroku\\\\bin;C:\\\\ProgramData\\\\sripa\\\\GitHubDesktop\\\\bin;C:\\\\Users\\\\sripa\\\\AppData\\\\Roaming\\\\npm'"
+    },
+    "http_headers": {
+        "http": {
+            "error": "HTTP fetch failed: "
+        },
+        "https": {
+            "Content-Security-Policy": "object-src 'none';base-uri 'self';script-src 'nonce-edjieVDGQQmGK0NLfzbUeA' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/honest_dns/1_0;frame-ancestors 'none'",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+            "X-Content-Type-Options": "nosniff",
+            "Content-Security-Policy-Report-Only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/ntdsgswbsc:55:0",
+            "Cross-Origin-Opener-Policy-Report-Only": "same-origin; report-to=ntdsgswbsc:55:0",
+            "Report-To": "{\"group\":\"ntdsgswbsc:55:0\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/ntdsgswbsc:55:0\"}],}",
+            "Content-Encoding": "gzip",
+            "Server": "scaffolding on HTTPServer2",
+            "Content-Length": "720",
+            "X-XSS-Protection": "0",
+            "X-Frame-Options": "SAMEORIGIN",
+            "Date": "Wed, 28 May 2025 07:43:09 GMT",
+            "Expires": "Wed, 28 May 2025 07:48:09 GMT",
+            "Cache-Control": "public, max-age=300",
+            "Content-Type": "text/html; charset=UTF-8",
+            "Age": "206",
+            "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+        }
+    },
+    "ssl_info": {
+        "error": "testssl.sh not found at specified path"
+    },
+    "nmap_vuln_info": [],
+    "web_vulnerabilities": [],
+    "vulnerabilities": [
+        {
+            "type": "missing_security_headers",
+            "details": "Missing headers for https: Referrer-Policy",
+            "severity": "medium",
+            "mitigation": "Implement missing headers: Referrer-Policy. Example: Content-Security-Policy: default-src 'self';"
+        }
+    ],
+    "vulners_scan": {},
+    "mitigations": {}
+}

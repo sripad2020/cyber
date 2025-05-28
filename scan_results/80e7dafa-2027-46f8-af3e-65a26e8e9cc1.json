@@ -1,0 +1,85 @@
+{
+    "target": "reva.edu.in",
+    "timestamp": "2025-05-28T08:18:41.621239",
+    "target_ip": "18.155.49.52",
+    "open_ports": [],
+    "services": {
+        "error": "Nmap scan failed: 'nmap program was not found in path. PATH is : F:\\\\3.9\\\\Scripts\\\\;F:\\\\3.9\\\\;C:\\\\Program Files (x86)\\\\Python310-32\\\\Scripts\\\\;C:\\\\Program Files (x86)\\\\Python310-32\\\\;F:\\\\3.12.5\\\\Scripts\\\\;F:\\\\3.12.5\\\\;C:\\\\Program Files\\\\Python311\\\\Scripts\\\\;C:\\\\Program Files\\\\Python311\\\\;C:\\\\Program Files\\\\Python312\\\\Scripts\\\\;C:\\\\Program Files\\\\Python312\\\\;F:\\\\3.8\\\\Scripts\\\\;F:\\\\3.8\\\\;F:\\\\3.11\\\\Scripts\\\\;F:\\\\3.11\\\\;F:\\\\3.9.8\\\\Scripts\\\\;F:\\\\3.9.8\\\\;F:\\\\3.7\\\\Scripts\\\\;F:\\\\3.7\\\\;F:\\\\3.10\\\\Scripts\\\\;F:\\\\3.10\\\\;F:\\\\VMWARE\\\\bin\\\\;C:\\\\WINDOWS\\\\system32;C:\\\\WINDOWS;C:\\\\WINDOWS\\\\System32\\\\Wbem;C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\;C:\\\\WINDOWS\\\\System32\\\\OpenSSH\\\\;C:\\\\Program Files\\\\dotnet\\\\;C:\\\\Program Files\\\\Java\\\\jdk-21\\\\bin;C:\\\\Program Files\\\\nodejs\\\\;C:\\\\ProgramData\\\\chocolatey\\\\bin;C:\\\\Program Files\\\\Git\\\\cmd;C:\\\\Users\\\\sripa\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps;F:\\\\f1\\\\PyCharm Community Edition 2023.3.2\\\\bin;;C:\\\\Users\\\\sripa\\\\AppData\\\\Local\\\\Programs\\\\Microsoft VS Code\\\\bin;C:\\\\Program Files (x86)\\\\heroku\\\\bin;C:\\\\ProgramData\\\\sripa\\\\GitHubDesktop\\\\bin;C:\\\\Users\\\\sripa\\\\AppData\\\\Roaming\\\\npm'"
+    },
+    "http_headers": {
+        "http": {
+            "Content-Type": "text/html; charset=UTF-8",
+            "Transfer-Encoding": "chunked",
+            "Connection": "keep-alive",
+            "Date": "Wed, 28 May 2025 08:18:43 GMT",
+            "Expect-CT": "enforce,max-age=2592000",
+            "Content-Language": "en",
+            "Server": "Apache/2.4.62 (Amazon Linux)",
+            "Expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+            "Pragma": "no-cache",
+            "Set-Cookie": "ci_session=b4625f8e12561c1f936c4415194f7ab0; expires=Wed, 28 May 2025 10:18:43 GMT; Max-Age=7200; path=/; HttpOnly; SameSite=Lax",
+            "X-Frame-Options": "SAMEORIGIN",
+            "Referrer-Policy": "no-referrer-when-downgrade",
+            "Permissions-Policy": "geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(), payment=()",
+            "X-XSS-Protection": "1; mode=block",
+            "X-Content-Type-Options": "nosniff",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+            "X-Cache": "Miss from cloudfront",
+            "Via": "1.1 9c599852961e601fbfb51ee149f79836.cloudfront.net (CloudFront)",
+            "X-Amz-Cf-Pop": "MAA50-P1",
+            "Alt-Svc": "h3=\":443\"; ma=86400",
+            "X-Amz-Cf-Id": "DY7kQ77uo5moPswRsDSJR7oEpBcYDZUyBJ33vHGZ0kYXxO5TBY_3uw=="
+        },
+        "https": {
+            "Content-Type": "text/html; charset=UTF-8",
+            "Transfer-Encoding": "chunked",
+            "Connection": "keep-alive",
+            "Date": "Wed, 28 May 2025 08:18:44 GMT",
+            "Expect-CT": "enforce,max-age=2592000",
+            "Content-Language": "en",
+            "Server": "Apache/2.4.62 (Amazon Linux)",
+            "Expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+            "Pragma": "no-cache",
+            "X-Frame-Options": "SAMEORIGIN",
+            "Referrer-Policy": "no-referrer-when-downgrade",
+            "Permissions-Policy": "geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(), payment=()",
+            "X-XSS-Protection": "1; mode=block",
+            "X-Content-Type-Options": "nosniff",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+            "X-Cache": "Miss from cloudfront",
+            "Via": "1.1 fafd80ec9f031fbf650dcc790d82e0c6.cloudfront.net (CloudFront)",
+            "X-Amz-Cf-Pop": "MAA50-P1",
+            "Alt-Svc": "h3=\":443\"; ma=86400",
+            "X-Amz-Cf-Id": "aZd02bSuVShdkAwCWQ0DA_nAr2vf0xA9h0iATxPW-bT0kiXUuOwjUw=="
+        }
+    },
+    "ssl_info": {
+        "error": "testssl.sh not found at specified path"
+    },
+    "nmap_vuln_info": [],
+    "web_vulnerabilities": [],
+    "vulnerabilities": [
+        {
+            "type": "missing_security_headers",
+            "details": "Missing headers for http: Content-Security-Policy",
+            "severity": "medium",
+            "mitigation": "Implement missing headers: Content-Security-Policy. Example: Content-Security-Policy: default-src 'self';"
+        },
+        {
+            "type": "insecure_cookie",
+            "details": "Non-secure cookie detected in http response",
+            "severity": "medium",
+            "mitigation": "Set the 'Secure' flag on cookies to ensure they are only sent over HTTPS."
+        },
+        {
+            "type": "missing_security_headers",
+            "details": "Missing headers for https: Content-Security-Policy",
+            "severity": "medium",
+            "mitigation": "Implement missing headers: Content-Security-Policy. Example: Content-Security-Policy: default-src 'self';"
+        }
+    ],
+    "vulners_scan": {},
+    "mitigations": {}
+}
