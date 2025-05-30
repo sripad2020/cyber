@@ -142,7 +142,6 @@
             overflow-x: auto;
         }
 
-        /* Custom Scrollbar Styling */
         .results-container::-webkit-scrollbar {
             width: 12px;
             height: 12px;
@@ -214,15 +213,15 @@
             transition: all 0.3s ease;
             font-family: 'Rajdhani', sans-serif;
             font-weight: 500;
-            overflow-x: auto; /* Enable horizontal scrollbar for long content */
-            white-space: nowrap; /* Prevent text wrapping for input fields */
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
         .form-group textarea {
             resize: vertical;
             min-height: 100px;
-            white-space: pre-wrap; /* Allow wrapping for textarea content */
-            overflow-x: auto; /* Enable horizontal scrollbar for long lines */
+            white-space: pre-wrap;
+            overflow-x: auto;
         }
 
         .form-group input:focus, .form-group textarea:focus {
@@ -390,7 +389,7 @@
         }
 
         .neon-text {
-            text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor;
+            text-shadow: 0 0 5px currentColor, 0\ 0 10px currentColor, 0 0 20px currentColor;
             animation: neonGlow 1.5s ease-in-out infinite alternate;
         }
 
@@ -553,354 +552,501 @@
                                         <p>Please check your input and try again.</p>
                                     </div>
                                 {% else %}
-                                    <h3>Details</h3>
-                                    <table class="feature-table">
-                                        <tr>
-                                            <th>Field</th>
-                                            <th>Value</th>
-                                        </tr>
-                                        {% if key == 'phishing_url' %}
+                                    {% if key == 'email_analysis' %}
+                                        <h3>Comprehensive Verdict</h3>
+                                        <table class="feature-table">
                                             <tr>
-                                                <td>URL</td>
-                                                <td>{{ data.url | default('N/A') }}</td>
+                                                <th>Field</th>
+                                                <th>Value</th>
                                             </tr>
                                             <tr>
-                                                <td>Domain</td>
-                                                <td>{{ data.domain | default('N/A') }}</td>
+                                                <td>Verdict</td>
+                                                <td>{{ data.comprehensive_verdict.verdict | default('N/A') }}</td>
                                             </tr>
                                             <tr>
-                                                <td>Is Phishing</td>
-                                                <td>{{ 'Yes' if data.status == 'Malicious' else 'No' }}</td>
+                                                <td>Total Threat Score</td>
+                                                <td>{{ data.comprehensive_verdict.total_threat_score | default('N/A') }}</td>
                                             </tr>
                                             <tr>
                                                 <td>Confidence</td>
-                                                <td>{{ '90%' if data.status == 'Malicious' else '0%' }}</td>
+                                                <td>{{ data.comprehensive_verdict.confidence | default('N/A') }}</td>
                                             </tr>
                                             <tr>
-                                                <td>Threat Types</td>
-                                                <td>
-                                                    {% if data.threat_type and data.threat_type is sequence %}
-                                                        {{ data.threat_type | join(', ') }}
-                                                    {% else %}
-                                                        None
-                                                    {% endif %}
-                                                </td>
+                                                <td>Recommendation</td>
+                                                <td>{{ data.comprehensive_verdict.recommendation | default('N/A') }}</td>
+                                            </tr>
+                                        </table>
+
+                                        <h3>Basic Analysis</h3>
+                                        <table class="feature-table">
+                                            <tr>
+                                                <th>Field</th>
+                                                <th>Value</th>
                                             </tr>
                                             <tr>
-                                                <td>Severity</td>
-                                                <td>{{ data.severity | default('N/A') }}</td>
+                                                <td>Score</td>
+                                                <td>{{ data.basic_analysis.score | default('N/A') }}</td>
                                             </tr>
                                             <tr>
-                                                <td>Last Seen</td>
-                                                <td>{{ data.last_seen | default('N/A') }}</td>
+                                                <td>Interpretation</td>
+                                                <td>{{ data.basic_analysis.interpretation[data.basic_analysis.score | string] | default('N/A') }}</td>
+                                            </tr>
+                                        </table>
+                                        {% if data.basic_analysis.matches %}
+                                            <details>
+                                                <summary>Keyword Matches</summary>
+                                                <table class="feature-table">
+                                                    <tr>
+                                                        <th>Keyword</th>
+                                                        <th>Weight</th>
+                                                        <th>Category</th>
+                                                        <th>Context</th>
+                                                    </tr>
+                                                    {% for match in data.basic_analysis.matches %}
+                                                        <tr>
+                                                            <td>{{ match.keyword }}</td>
+                                                            <td>{{ match.weight }}</td>
+                                                            <td>{{ match.category }}</td>
+                                                            <td>{{ match.context | default('N/A') }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </table>
+                                            </details>
+                                        {% endif %}
+
+                                        <h3>Link Analysis</h3>
+                                        <table class="feature-table">
+                                            <tr>
+                                                <th>Field</th>
+                                                <th>Value</th>
                                             </tr>
                                             <tr>
-                                                <td>Cache Duration</td>
-                                                <td>{{ data.cache_duration | default('N/A') }}</td>
+                                                <td>Total Links Found</td>
+                                                <td>{{ data.link_analysis.total_links_found | default('N/A') }}</td>
                                             </tr>
                                             <tr>
-                                                <td>HTTP Status</td>
-                                                <td>{{ data.http_status | default('N/A') }}</td>
+                                                <td>Shortened URLs</td>
+                                                <td>{{ data.link_analysis.red_flags.shortened_urls | default('N/A') }}</td>
                                             </tr>
                                             <tr>
-                                                <td>Final URL</td>
-                                                <td>{{ data.final_url | default('N/A') }}</td>
+                                                <td>Suspicious Domains</td>
+                                                <td>{{ data.link_analysis.red_flags.suspicious_domains | default('N/A') }}</td>
+                                            </tr>
+                                        </table>
+                                        {% if data.link_analysis.links %}
+                                            <details>
+                                                <summary>Links Details</summary>
+                                                {% for link in data.link_analysis.links %}
+                                                    <table class="feature-table">
+                                                        <tr>
+                                                            <th>Field</th>
+                                                            <th>Value</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Original URL</td>
+                                                            <td>{{ link.original_url | default('N/A') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Domain</td>
+                                                            <td>{{ link.domain | default('N/A') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Is Shortened</td>
+                                                            <td>{{ 'Yes' if link.is_shortened else 'No' }}</td>
+                                                        </tr>
+                                                        {% if link.safety_analysis.virustotal %}
+                                                            <tr>
+                                                                <td>VirusTotal Positives</td>
+                                                                <td>{{ link.safety_analysis.virustotal.positives | default('N/A') }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>VirusTotal Total Scans</td>
+                                                                <td>{{ link.safety_analysis.virustotal.total | default('N/A') }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>VirusTotal Scan Date</td>
+                                                                <td>{{ link.safety_analysis.virustotal.scan_date | default('N/A') }}</td>
+                                                            </tr>
+                                                        {% endif %}
+                                                        {% if link.safety_analysis.api_error %}
+                                                            <tr>
+                                                                <td>API Error</td>
+                                                                <td>{{ link.safety_analysis.api_error }}</td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    </table>
+                                                {% endfor %}
+                                            </details>
+                                        {% endif %}
+
+                                        <h3>API Analysis</h3>
+                                        <table class="feature-table">
+                                            <tr>
+                                                <th>Field</th>
+                                                <th>Value</th>
+                                            </tr>
+                                            {% if data.api_analysis.google_safe_browsing %}
+                                                <tr>
+                                                    <td>Google Safe Browsing</td>
+                                                    <td>{{ data.api_analysis.google_safe_browsing.threat_score | default('N/A') }}</td>
+                                                </tr>
+                                            {% endif %}
+                                            {% if data.api_analysis.api_errors %}
+                                                <tr>
+                                                    <td>API Errors</td>
+                                                    <td>{{ data.api_analysis.api_errors }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        </table>
+
+                                        <h3>Processing Details</h3>
+                                        <table class="feature-table">
+                                            <tr>
+                                                <th>Field</th>
+                                                <th>Value</th>
                                             </tr>
                                             <tr>
-                                                <td>Content Length (Bytes)</td>
-                                                <td>{{ data.content_length | default('N/A') }}</td>
+                                                <td>Timestamp</td>
+                                                <td>{{ data.processing_details.timestamp | default('N/A') }}</td>
                                             </tr>
                                             <tr>
-                                                <td>Response Time (ms)</td>
-                                                <td>{{ data.response_time_ms | default('N/A') }}</td>
-                                            </tr>
-                                        {% elif key == 'email_analysis' %}
-                                            <tr>
-                                                <td>Content</td>
-                                                <td>{{ data.content | truncate(100) | default('N/A') }}</td>
+                                                <td>Content Length</td>
+                                                <td>{{ data.processing_details.content_length | default('N/A') }}</td>
                                             </tr>
                                             <tr>
-                                                <td>Is Phishing</td>
-                                                <td>{{ 'Yes' if data.is_phishing else 'No' }}</td>
+                                                <td>Content Sample</td>
+                                                <td>{{ data.processing_details.content_sample | default('N/A') }}</td>
                                             </tr>
+                                        </table>
+                                    {% else %}
+                                        <h3>Details</h3>
+                                        <table class="feature-table">
                                             <tr>
-                                                <td>Indicators</td>
-                                                <td>
-                                                    {% if data.indicators and data.indicators is sequence %}
-                                                        {% for indicator in data.indicators %}
-                                                            {{ indicator }}<br>
+                                                <th>Field</th>
+                                                <th>Value</th>
+                                            </tr>
+                                            {% if key == 'phishing_url' %}
+                                                <tr>
+                                                    <td>URL</td>
+                                                    <td>{{ data.url | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Domain</td>
+                                                    <td>{{ data.domain | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Is Phishing</td>
+                                                    <td>{{ 'Yes' if data.status == 'Malicious' else 'No' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Confidence</td>
+                                                    <td>{{ '90%' if data.status == 'Malicious' else '0%' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Threat Types</td>
+                                                    <td>
+                                                        {% if data.threat_type and data.threat_type is sequence %}
+                                                            {{ data.threat_type | join(', ') }}
+                                                        {% else %}
+                                                            None
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Severity</td>
+                                                    <td>{{ data.severity | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Last Seen</td>
+                                                    <td>{{ data.last_seen | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cache Duration</td>
+                                                    <td>{{ data.cache_duration | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>HTTP Status</td>
+                                                    <td>{{ data.http_status | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Final URL</td>
+                                                    <td>{{ data.final_url | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Content Length (Bytes)</td>
+                                                    <td>{{ data.content_length | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Response Time (ms)</td>
+                                                    <td>{{ data.response_time_ms | default('N/A') }}</td>
+                                                </tr>
+                                            {% elif key == 'domain_age' %}
+                                                <tr>
+                                                    <td>Domain</td>
+                                                    <td>{{ data.domain | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Age (Days)</td>
+                                                    <td>{{ data.whois.age_days | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Created Date</td>
+                                                    <td>{{ data.whois.creation_date | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Expiration Date</td>
+                                                    <td>{{ data.whois.expiration_date | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Registrar</td>
+                                                    <td>{{ data.whois.registrar | default('N/A') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Is New Domain</td>
+                                                    <td>{{ 'Yes' if data.whois.is_new else 'No' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Is Expired</td>
+                                                    <td>{{ 'Yes' if data.whois.is_expired else 'No' }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        </table>
+                                        {% if key == 'phishing_url' %}
+                                            {% if data.raw_response %}
+                                                <details>
+                                                    <summary>Raw API Response (Debug)</summary>
+                                                    <pre>{{ data.raw_response | tojson(indent=2) }}</pre>
+                                                </details>
+                                            {% endif %}
+                                            {% if data.headers is defined %}
+                                                <details>
+                                                    <summary>HTTP Headers</summary>
+                                                    <table class="feature-table">
+                                                        <tr>
+                                                            <th>Header</th>
+                                                            <th>Value</th>
+                                                        </tr>
+                                                        {% for header, value in data.headers.items() %}
+                                                            <tr>
+                                                                <td>{{ header }}</td>
+                                                                <td>{{ value }}</td>
+                                                            </tr>
                                                         {% endfor %}
-                                                    {% else %}
-                                                        None
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
+                                                    </table>
+                                                </details>
+                                            {% endif %}
                                         {% elif key == 'domain_age' %}
-                                            <tr>
-                                                <td>Domain</td>
-                                                <td>{{ data.domain | default('N/A') }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Age (Days)</td>
-                                                <td>{{ data.whois.age_days | default('N/A') }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Created Date</td>
-                                                <td>{{ data.whois.creation_date | default('N/A') }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Expiration Date</td>
-                                                <td>{{ data.whois.expiration_date | default('N/A') }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Registrar</td>
-                                                <td>{{ data.whois.registrar | default('N/A') }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Is New Domain</td>
-                                                <td>{{ 'Yes' if data.whois.is_new else 'No' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Is Expired</td>
-                                                <td>{{ 'Yes' if data.whois.is_expired else 'No' }}</td>
-                                            </tr>
-                                        {% endif %}
-                                    </table>
-                                    {% if key == 'phishing_url' %}
-                                        {% if data.raw_response %}
-                                            <details>
-                                                <summary>Raw API Response (Debug)</summary>
-                                                <pre>{{ data.raw_response | tojson(indent=2) }}</pre>
-                                            </details>
-                                        {% endif %}
-                                        {% if data.headers is defined %}
-                                            <details>
-                                                <summary>HTTP Headers</summary>
-                                                <table class="feature-table">
-                                                    <tr>
-                                                        <th>Header</th>
-                                                        <th>Value</th>
-                                                    </tr>
-                                                    {% for header, value in data.headers.items() %}
+                                            {% if data.whois is defined and (data.whois.name_servers or data.whois.status or data.whois.emails) %}
+                                                <details>
+                                                    <summary>WHOIS Additional Details</summary>
+                                                    <table class="feature-table">
                                                         <tr>
-                                                            <td>{{ header }}</td>
-                                                            <td>{{ value }}</td>
+                                                            <th>Field</th>
+                                                            <th>Value</th>
                                                         </tr>
-                                                    {% endfor %}
-                                                </table>
-                                            </details>
-                                        {% endif %}
-                                    {% elif key == 'domain_age' %}
-                                        {% if data.whois is defined and (data.whois.name_servers or data.whois.status or data.whois.emails) %}
-                                            <details>
-                                                <summary>WHOIS Additional Details</summary>
-                                                <table class="feature-table">
-                                                    <tr>
-                                                        <th>Field</th>
-                                                        <th>Value</th>
-                                                    </tr>
-                                                    {% if data.whois.name_servers %}
+                                                        {% if data.whois.name_servers %}
+                                                            <tr>
+                                                                <td>Name Servers</td>
+                                                                <td>{{ data.whois.name_servers | join(', ') }}</td>
+                                                            </tr>
+                                                        {% endif %}
+                                                        {% if data.whois.status %}
+                                                            <tr>
+                                                                <td>Status</td>
+                                                                <td>
+                                                                    {% if data.whois.status is sequence %}
+                                                                        {{ data.whois.status | join(', ') }}
+                                                                    {% else %}
+                                                                        {{ data.whois.status }}
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                        {% if data.whois.emails %}
+                                                            <tr>
+                                                                <td>Emails</td>
+                                                                <td>
+                                                                    {% if data.whois.emails is sequence %}
+                                                                        {{ data.whois.emails | join(', ') }}
+                                                                    {% else %}
+                                                                        {{ data.whois.emails }}
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    </table>
+                                                </details>
+                                            {% endif %}
+                                            {% if data.dns is defined %}
+                                                <details>
+                                                    <summary>DNS Records</summary>
+                                                    <table class="feature-table">
                                                         <tr>
-                                                            <td>Name Servers</td>
-                                                            <td>{{ data.whois.name_servers | join(', ') }}</td>
+                                                            <th>Record Type</th>
+                                                            <th>Values</th>
                                                         </tr>
-                                                    {% endif %}
-                                                    {% if data.whois.status %}
+                                                        {% for record_type, records in data.dns.items() %}
+                                                            <tr>
+                                                                <td>{{ record_type }}</td>
+                                                                <td>
+                                                                    {% if records %}
+                                                                        {{ records | join(', ') }}
+                                                                    {% else %}
+                                                                        None
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </table>
+                                                </details>
+                                            {% endif %}
+                                            {% if data.ssl is defined and not data.ssl.get('error') %}
+                                                <details>
+                                                    <summary>SSL Certificate</summary>
+                                                    <table class="feature-table">
                                                         <tr>
-                                                            <td>Status</td>
+                                                            <th>Field</th>
+                                                            <th>Value</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Issued To</td>
                                                             <td>
-                                                                {% if data.whois.status is sequence %}
-                                                                    {{ data.whois.status | join(', ') }}
+                                                                {% if data.ssl.issued_to is defined %}
+                                                                    {% for key, value in data.ssl.issued_to.items() %}
+                                                                        {{ key | capitalize }}: {{ value }}<br>
+                                                                    {% endfor %}
                                                                 {% else %}
-                                                                    {{ data.whois.status }}
+                                                                    N/A
                                                                 {% endif %}
                                                             </td>
                                                         </tr>
-                                                    {% endif %}
-                                                    {% if data.whois.emails %}
                                                         <tr>
-                                                            <td>Emails</td>
+                                                            <td>Issuer</td>
                                                             <td>
-                                                                {% if data.whois.emails is sequence %}
-                                                                    {{ data.whois.emails | join(', ') }}
+                                                                {% if data.ssl.issuer is defined %}
+                                                                    {% for key, value in data.ssl.issuer.items() %}
+                                                                        {{ key | capitalize }}: {{ value }}<br>
+                                                                    {% endfor %}
                                                                 {% else %}
-                                                                    {{ data.whois.emails }}
+                                                                    N/A
                                                                 {% endif %}
                                                             </td>
                                                         </tr>
-                                                    {% endif %}
-                                                </table>
-                                            </details>
-                                        {% endif %}
-                                        {% if data.dns is defined %}
-                                            <details>
-                                                <summary>DNS Records</summary>
-                                                <table class="feature-table">
-                                                    <tr>
-                                                        <th>Record Type</th>
-                                                        <th>Values</th>
-                                                    </tr>
-                                                    {% for record_type, records in data.dns.items() %}
                                                         <tr>
-                                                            <td>{{ record_type }}</td>
-                                                            <td>
-                                                                {% if records %}
-                                                                    {{ records | join(', ') }}
-                                                                {% else %}
-                                                                    None
-                                                                {% endif %}
-                                                            </td>
+                                                            <td>Valid From</td>
+                                                            <td>{{ data.ssl.valid_from | default('N/A') }}</td>
                                                         </tr>
-                                                    {% endfor %}
-                                                </table>
-                                            </details>
-                                        {% endif %}
-                                        {% if data.ssl is defined and not data.ssl.get('error') %}
-                                            <details>
-                                                <summary>SSL Certificate</summary>
-                                                <table class="feature-table">
-                                                    <tr>
-                                                        <th>Field</th>
-                                                        <th>Value</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Issued To</td>
-                                                        <td>
-                                                            {% if data.ssl.issued_to is defined %}
-                                                                {% for key, value in data.ssl.issued_to.items() %}
-                                                                    {{ key | capitalize }}: {{ value }}<br>
-                                                                {% endfor %}
-                                                            {% else %}
-                                                                N/A
-                                                            {% endif %}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Issuer</td>
-                                                        <td>
-                                                            {% if data.ssl.issuer is defined %}
-                                                                {% for key, value in data.ssl.issuer.items() %}
-                                                                    {{ key | capitalize }}: {{ value }}<br>
-                                                                {% endfor %}
-                                                            {% else %}
-                                                                N/A
-                                                            {% endif %}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Valid From</td>
-                                                        <td>{{ data.ssl.valid_from | default('N/A') }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Valid To</td>
-                                                        <td>{{ data.ssl.valid_to | default('N/A') }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Certificate Age (Days)</td>
-                                                        <td>{{ data.ssl.cert_age_days | default('N/A') }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Is Valid</td>
-                                                        <td>{{ 'Yes' if data.ssl.is_valid else 'No' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Is New</td>
-                                                        <td>{{ 'Yes' if data.ssl.is_new else 'No' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Serial Number</td>
-                                                        <td>{{ data.ssl.serial_number | default('N/A') }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Version</td>
-                                                        <td>{{ data.ssl.version | default('N/A') }}</td>
-                                                    </tr>
-                                                </table>
-                                            </details>
-                                        {% endif %}
-                                        {% if data.connectivity is defined and not data.connectivity.get('error') %}
-                                            <details>
-                                                <summary>Connectivity</summary>
-                                                <table class="feature-table">
-                                                    <tr>
-                                                        <th>Field</th>
-                                                        <th>Value</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>HTTP Status</td>
-                                                        <td>{{ data.connectivity.http_status | default('N/A') }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Final URL</td>
-                                                        <td>{{ data.connectivity.final_url | default('N/A') }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Response Time (ms)</td>
-                                                        <td>{{ data.connectivity.response_time_ms | default('N/A') }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Content Length</td>
-                                                        <td>{{ data.connectivity.content_length | default('N/A') }}</td>
-                                                    </tr>
-                                                    {% if data.connectivity.headers is defined %}
                                                         <tr>
-                                                            <td>Headers</td>
-                                                            <td>
-                                                                <details>
-                                                                    <summary>View Headers</summary>
-                                                                    <table class="feature-table">
-                                                                        <tr>
-                                                                            <th>Header</th>
-                                                                            <th>Value</th>
-                                                                        </tr>
-                                                                        {% for header, value in data.connectivity.headers.items() %}
+                                                            <td>Valid To</td>
+                                                            <td>{{ data.ssl.valid_to | default('N/A') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Certificate Age (Days)</td>
+                                                            <td>{{ data.ssl.cert_age_days | default('N/A') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Is Valid</td>
+                                                            <td>{{ 'Yes' if data.ssl.is_valid else 'No' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Is New</td>
+                                                            <td>{{ 'Yes' if data.ssl.is_new else 'No' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Serial Number</td>
+                                                            <td>{{ data.ssl.serial_number | default('N/A') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Version</td>
+                                                            <td>{{ data.ssl.version | default('N/A') }}</td>
+                                                        </tr>
+                                                    </table>
+                                                </details>
+                                            {% endif %}
+                                            {% if data.connectivity is defined and not data.connectivity.get('error') %}
+                                                <details>
+                                                    <summary>Connectivity</summary>
+                                                    <table class="feature-table">
+                                                        <tr>
+                                                            <th>Field</th>
+                                                            <th>Value</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>HTTP Status</td>
+                                                            <td>{{ data.connectivity.http_status | default('N/A') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Final URL</td>
+                                                            <td>{{ data.connectivity.final_url | default('N/A') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Response Time (ms)</td>
+                                                            <td>{{ data.connectivity.response_time_ms | default('N/A') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Content Length</td>
+                                                            <td>{{ data.connectivity.content_length | default('N/A') }}</td>
+                                                        </tr>
+                                                        {% if data.connectivity.headers is defined %}
+                                                            <tr>
+                                                                <td>Headers</td>
+                                                                <td>
+                                                                    <details>
+                                                                        <summary>View Headers</summary>
+                                                                        <table class="feature-table">
                                                                             <tr>
-                                                                                <td>{{ header }}</td>
-                                                                                <td>{{ value }}</td>
+                                                                                <th>Header</th>
+                                                                                <th>Value</th>
+                                                                            </tr>
+                                                                            {% for header, value in data.connectivity.headers.items() %}
+                                                                                <tr>
+                                                                                    <td>{{ header }}</td>
+                                                                                    <td>{{ value }}</td>
                                                                                 </tr>
-                                                                        {% endfor %}
-                                                                    </table>
-                                                                </details>
-                                                            </td>
+                                                                            {% endfor %}
+                                                                        </table>
+                                                                    </details>
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    </table>
+                                                </details>
+                                            {% endif %}
+                                            {% if data.reputation is defined %}
+                                                <details>
+                                                    <summary>Reputation Indicators</summary>
+                                                    <table class="feature-table">
+                                                        <tr>
+                                                            <th>Indicator</th>
+                                                            <th>Status</th>
                                                         </tr>
-                                                    {% endif %}
-                                                </table>
-                                            </details>
-                                        {% endif %}
-                                        {% if data.reputation is defined %}
-                                            <details>
-                                                <summary>Reputation Indicators</summary>
-                                                <table class="feature-table">
-                                                    <tr>
-                                                        <th>Indicator</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Has MX Records</td>
-                                                        <td>{{ 'Yes' if data.reputation.has_mx_records else 'No' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Has SPF Record</td>
-                                                        <td>{{ 'Yes' if data.reputation.has_spf_record else 'No' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Has DMARC Record</td>
-                                                        <td>{{ 'Yes' if data.reputation.has_dmarc_record else 'No' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>HTTPS Working</td>
-                                                        <td>{{ 'Yes' if data.reputation.is_https_working else 'No' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Is Redirecting</td>
-                                                        <td>{{ 'Yes' if data.reputation.is_redirecting else 'No' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Common Nameserver</td>
-                                                        <td>{{ 'Yes' if data.reputation.common_nameserver else 'No' }}</td>
-                                                    </tr>
-                                                </table>
-                                            </details>
+                                                        <tr>
+                                                            <td>Has MX Records</td>
+                                                            <td>{{ 'Yes' if data.reputation.has_mx_records else 'No' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Has SPF Record</td>
+                                                            <td>{{ 'Yes' if data.reputation.has_spf_record else 'No' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Has DMARC Record</td>
+                                                            <td>{{ 'Yes' if data.reputation.has_dmarc_record else 'No' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>HTTPS Working</td>
+                                                            <td>{{ 'Yes' if data.reputation.is_https_working else 'No' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Is Redirecting</td>
+                                                            <td>{{ 'Yes' if data.reputation.is_redirecting else 'No' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Common Nameserver</td>
+                                                            <td>{{ 'Yes' if data.reputation.common_nameserver else 'No' }}</td>
+                                                        </tr>
+                                                    </table>
+                                                </details>
+                                            {% endif %}
                                         {% endif %}
                                     {% endif %}
                                 {% endif %}
@@ -940,10 +1086,10 @@
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
         const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.03;
-            color: 0x00ff9d;
-            transparent: true;
-            opacity: 0.8;
+            size: 0.03,
+            color: 0x00ff9d,
+            transparent: true,
+            opacity: 0.8,
             blending: THREE.AdditiveBlending
         });
 
