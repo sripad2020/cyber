@@ -860,19 +860,218 @@ def check_phishing_url(url):
 
 
 def analyze_email_content(content):
-    phishing_keywords = ['urgent', 'password', 'verify', 'account', 'suspended', 'immediately']
-    score = 0
-    matches = []
-    content_lower = content.lower()
-    for keyword in phishing_keywords:
-        if keyword in content_lower:
-            score += 1
-            matches.append(keyword)
-    return {
-        'phishing_score': score,
-        'matched_keywords': matches,
-        'is_suspicious': score > 2
+    # Initialize results dictionary
+    analysis_result = {
+        'basic_analysis': {},
+        'link_analysis': {},
+        'api_analysis': {},
+        'comprehensive_verdict': {},
+        'processing_details': {
+            'timestamp': time.strftime("%Y-%m-%d %H:%M:%S"),
+            'content_length': len(content),
+            'content_sample': content[:100] + "..." if len(content) > 100 else content
+        }
     }
+
+    # 1. Basic Keyword Analysis (Enhanced)
+    phishing_keywords = {
+        'urgent': {'weight': 2, 'category': 'urgency'},
+        'password': {'weight': 3, 'category': 'credential'},
+        'verify': {'weight': 2, 'category': 'action'},
+        'account': {'weight': 1, 'category': 'target'},
+        'suspended': {'weight': 3, 'category': 'threat'},
+        'immediately': {'weight': 2, 'category': 'urgency'},
+        'click here': {'weight': 2, 'category': 'action'},
+        'security alert': {'weight': 3, 'category': 'authority'},
+        'limited time': {'weight': 2, 'category': 'urgency'},
+        'unauthorized access': {'weight': 3, 'category': 'threat'}
+    }
+
+    basic_matches = []
+    basic_score = 0
+    content_lower = content.lower()
+
+    for keyword, details in phishing_keywords.items():
+        if keyword in content_lower:
+            basic_score += details['weight']
+            basic_matches.append({
+                'keyword': keyword,
+                'weight': details['weight'],
+                'category': details['category'],
+                'context': get_keyword_context(content, keyword)
+            })
+
+    analysis_result['basic_analysis'] = {
+        'score': basic_score,
+        'matches': basic_matches,
+        'interpretation': {
+            '0-5': 'Low probability of phishing',
+            '6-10': 'Moderate probability of phishing',
+            '11+': 'High probability of phishing'
+        }
+    }
+
+    # 2. Link Analysis
+    links = extract_links(content)
+    link_analysis = []
+
+    for link in links:
+        link_result = {
+            'original_url': link,
+            'domain': urlparse(link).netloc,
+            'is_shortened': is_shortened_url(link),
+            'redirect_chain': [],
+            'safety_analysis': {}
+        }
+
+        # Check URL against free API services
+        try:
+            # VirusTotal API (free tier limited)
+            vt_response = check_virustotal(link)
+            if vt_response:
+                link_result['safety_analysis']['virustotal'] = vt_response
+
+            # URLScan.io API (free tier available)
+            urlscan_response = check_urlscan(link)
+            if urlscan_response:
+                link_result['safety_analysis']['urlscan'] = urlscan_response
+        except Exception as e:
+            link_result['safety_analysis']['api_error'] = str(e)
+
+        link_analysis.append(link_result)
+
+    analysis_result['link_analysis'] = {
+        'total_links_found': len(links),
+        'links': link_analysis,
+        'red_flags': {
+            'shortened_urls': sum(1 for link in link_analysis if link['is_shortened']),
+            'suspicious_domains': sum(1 for link in link_analysis if is_suspicious_domain(link['domain']))
+        }
+    }
+
+    # 3. API Analysis (using free services)
+    try:
+        # Google Safe Browsing API (free tier available)
+        gsb_result = check_google_safe_browsing(content)
+        if gsb_result:
+            analysis_result['api_analysis']['google_safe_browsing'] = gsb_result
+
+    except Exception as e:
+        analysis_result['api_analysis']['api_errors'] = str(e)
+
+    # 4. Comprehensive Verdict
+    total_score = basic_score
+    if 'google_safe_browsing' in analysis_result['api_analysis']:
+        total_score += analysis_result['api_analysis']['google_safe_browsing'].get('threat_score', 0)
+
+    verdict = "Likely Legitimate"
+    if total_score > 15:
+        verdict = "Definite Phishing Attempt"
+    elif total_score > 10:
+        verdict = "Highly Suspicious"
+    elif total_score > 5:
+        verdict = "Potentially Suspicious"
+
+    analysis_result['comprehensive_verdict'] = {
+        'total_threat_score': total_score,
+        'verdict': verdict,
+        'confidence': f"{min(100, total_score * 5)}%",
+        'recommendation': "Do not click any links or provide information" if total_score > 5 else "Exercise normal caution"
+    }
+
+    return analysis_result
+
+
+# Helper functions
+def extract_links(text):
+    """Extract all URLs from text"""
+    url_pattern = re.compile(r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+[/\w .-]*/?')
+    return url_pattern.findall(text)
+
+
+def is_shortened_url(url):
+    """Check if URL is from known shortening service"""
+    shorteners = ['bit.ly', 'goo.gl', 'tinyurl.com', 'ow.ly', 't.co']
+    domain = urlparse(url).netloc
+    return any(shortener in domain for shortener in shorteners)
+
+
+def is_suspicious_domain(domain):
+    """Basic check for suspicious domains"""
+    suspicious_tlds = ['.xyz', '.top', '.gq', '.ml', '.tk', '.cf', '.ga']
+    numbers_in_domain = any(char.isdigit() for char in domain)
+    return numbers_in_domain or any(domain.endswith(tld) for tld in suspicious_tlds)
+
+
+def get_keyword_context(text, keyword, window=30):
+    """Get context around found keyword"""
+    text_lower = text.lower()
+    index = text_lower.find(keyword)
+    if index == -1:
+        return ""
+    start = max(0, index - window)
+    end = min(len(text), index + len(keyword) + window)
+    return text[start:end]
+
+
+# API Check Functions
+def check_virustotal(url):
+    api_key = f"{VT_API_KEY}"  # Replace with actual key
+    if not api_key or api_key == "YOUR_VIRUSTOTAL_API_KEY":
+        return None
+
+    params = {'apikey': api_key, 'resource': url}
+    try:
+        response = requests.get('https://www.virustotal.com/vtapi/v2/url/report', params=params)
+        if response.status_code == 200:
+            result = response.json()
+            return {
+                'positives': result.get('positives', 0),
+                'total': result.get('total', 0),
+                'scan_date': result.get('scan_date'),
+                'permalink': result.get('permalink')
+            }
+    except:
+        pass
+    return None
+
+
+def check_urlscan(url):
+    try:
+        headers = {'API-Key': 'c2bc-71b0-a4c5-6176228bd139'}  # Optional for public scans
+        data = {'url': url, 'public': 'on'}
+        response = requests.post('https://urlscan.io/api/v1/scan/', headers=headers, data=data)
+        if response.status_code == 200:
+            return response.json()
+    except:
+        pass
+    return None
+
+
+def check_google_safe_browsing(text):
+    api_key = f'{SAFE_BROWSING_API_KEY}'
+    if not api_key or api_key == "YOUR_GOOGLE_API_KEY":
+        return None
+
+    url = f"https://safebrowsing.googleapis.com/v4/threatMatches:find?key={api_key}"
+    body = {
+        "client": {"clientId": "phishdetector", "clientVersion": "1.0"},
+        "threatInfo": {
+            "threatTypes": ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE"],
+            "platformTypes": ["ANY_PLATFORM"],
+            "threatEntryTypes": ["URL"],
+            "threatEntries": [{"url": url} for url in extract_links(text)]
+        }
+    }
+
+    try:
+        response = requests.post(url, json=body)
+        if response.status_code == 200:
+            return response.json()
+    except:
+        pass
+    return None
+
 
 
 def check_domain_age(domain):
